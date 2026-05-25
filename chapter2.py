@@ -6,6 +6,9 @@ import re
 print("torch version:", version("torch"))
 print("tiktoken version:", version("tiktoken"))
 
+
+print("Tokenization: Chapter 2.2")
+
 cleanFile = "frankenstein_clean.txt"
 
 if not os.path.exists(cleanFile):
@@ -47,3 +50,51 @@ else:
 preprocessed = re.split(r'([,.:;?_!"()\']|--|\s)', novelText) 
 preprocessed = [item.strip() for item in preprocessed if item.strip()]
 print(preprocessed[:50])
+print(len(preprocessed))
+
+# text = input("Try whatever, could use the example from the book: ")
+
+# result = re.split(r'([,.:;?_!"()\']|--|\s)', text)
+# result = [item.strip() for item in result if item.strip()]
+# print(result)
+
+print("Token to token IDs: Chapter 2.3")
+allWords = sorted(set(preprocessed))
+vocabSize = len(allWords)
+#print(allWords)
+print(vocabSize)
+
+vocab = {token: integer for integer, token in enumerate(allWords)}
+# for i, item in enumerate(vocab.items()):
+#     print(item)
+#     if i >= 50:
+#         break
+
+class SimpleTokenizerV1:
+    def __init__(self, vocab):
+        self.strToInt = vocab
+        self.intToStr = {i:s for s, i in vocab.items()}
+
+    def encode(self, text):
+      preprocessed = re.split(r'([,.:;?_!"()\']|--|\s)', text)
+      preprocessed = [
+      item.strip() for item in preprocessed if item.strip()
+      ]
+      ids = [self.strToInt[s] for s in preprocessed]
+      return ids
+    
+    def decode(self, ids):
+      text = " ".join([self.intToStr[i] for i in ids])
+      text = re.sub(r'\s+([,.:;?!"()\'])', r'\1', text)
+      return text
+    
+tokenizer = SimpleTokenizerV1(vocab)
+
+text = """But I have one want which I have never yet been able to satisfy, and the
+absence of the object of which I now feel as a most severe evil, I have no
+friend, Margaret: when I am glowing with the enthusiasm of success, there
+will be none to participate my joy;"""
+
+ids = tokenizer.encode(text)
+print(ids)
+print(tokenizer.decode(ids))
