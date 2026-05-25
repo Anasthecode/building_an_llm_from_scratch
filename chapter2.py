@@ -24,6 +24,11 @@ if not os.path.exists(cleanFile):
         novelText = rawText.split(startMarker)[1].split(endMarker)[0]
         novelText = novelText.strip()
 
+        # Clean formatting BEFORE saving
+        novelText = novelText.replace('_', '') # Getting rid of italics
+        novelText = re.sub(r'\n\s*\n', '\n\n', novelText) # gettind rid of white space
+        # no need to git rid of bold fonts (*) as the end/start markers involve that already
+
         with open(cleanFile, "w", encoding="utf-8") as f:
             f.write(novelText)
         print("Text saved to 'frankenstein_clean.txt'")
