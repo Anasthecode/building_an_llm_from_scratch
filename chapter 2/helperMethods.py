@@ -3,7 +3,7 @@ import os
 import requests
 import re
 
-class URLReader:
+class HelperMethods:
   @staticmethod
   def readFile(cleanFile, url):
     if not os.path.exists(cleanFile):
@@ -28,7 +28,7 @@ class URLReader:
 
         with open(cleanFile, "w", encoding="utf-8") as f:
             f.write(novelText)
-        print("Text saved to 'frankenstein_clean.txt'")
+        print(f"Text saved to {cleanFile}")
         print(f"Total characters: {len(novelText)}")
       else:
           print("Could not find the start/end markers in the download file")
@@ -41,3 +41,11 @@ class URLReader:
       print(f"Loaded {len(novelText)} characters")
 
     return novelText
+  
+  @staticmethod
+  def makePreprocessed(novelText):
+    preprocessed = re.split(r'([,.:;?_!"()\']|--|\s)', novelText) 
+    preprocessed = [item.strip() for item in preprocessed if item.strip()]
+    preprocessedSize = len(preprocessed)
+
+    return preprocessed, preprocessedSize
