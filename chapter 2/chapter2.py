@@ -1,4 +1,5 @@
 from importlib.metadata import version
+import tiktoken
 
 # My own files/classes
 from helperMethods import HelperMethods
@@ -25,26 +26,16 @@ print("Preprocessed words size: ", preprocessedSize)
 # print(test)
 
 print("Token to token IDs: Chapter 2.3")
-allWords = sorted(set(preprocessed))
-"""The lines below are a new addition.
-   Their purpose is to provide a failsafe
-   incase the input is not in the vocabulary
-   Design principle: do more for fails than just rejection"""
-allWords.extend(["<|endoftext|>", "<|unk|>"])
-vocabSize = len(allWords)
-#print(allWords)
-print("Size of the vocabulary: ", vocabSize)
-print("Change between vocabulary size and the preprocessed: ", preprocessedSize - vocabSize)
-
-vocab = {token: integer for integer, token in enumerate(allWords)}
-# print(vocab)
+vocabV1, vocabSizeV1 = HelperMethods.makeVocabV1(preprocessed)
+print("Size of vocabulary V1: ", vocabSizeV1)
+print("Change between vocabulary size and the preprocessed: ", preprocessedSize - vocabSizeV1)
 
 # for i, item in enumerate(vocab.items()):
 #     print(item)
 #     if i >= 50:
 #         break
     
-tokenizer = SimpleTokenizerV1(vocab)
+tokenizer = SimpleTokenizerV1(vocabV1)
 
 text = """But I have one want which I have never yet been able to satisfy, and the
 absence of the object of which I now feel as a most severe evil, I have no
@@ -52,14 +43,34 @@ friend, Margaret: when I am glowing with the enthusiasm of success, there
 will be none to participate my joy;"""
 
 ids = tokenizer.encode(text)
-print(ids)
-print(tokenizer.decode(ids))
+print("IDs of version 1: ", ids)
+print("Decoding of version 1: ", tokenizer.decode(ids))
+
+vocabV2, vocabSizeV2 = HelperMethods.makeVocabV2(preprocessed)
+print("Size of vocabulary V2: ", vocabSizeV2)
+print("Change between vocabulary size and the preprocessed: ", preprocessedSize - vocabSizeV2)
 
 text1 = "Hello, do you like tea?"
 text2 = "In the sunlit terraces of the palace."
 text = " <|endoftext|> ".join((text1, text2))
-print("Practice text: ", text)
+print("Practice text for version 2: ", text)
 
-tokenizer = SimpleTokenizerV2(vocab)
+tokenizer = SimpleTokenizerV2(vocabV2)
 print("Encoding: ", tokenizer.encode(text))
 print("Decoding: ", tokenizer.decode(tokenizer.encode(text)))
+
+
+
+tokenizer = tiktoken.get_encoding("gpt2")
+# text = ( # This is from the book, not mine
+#  "Hello, do you like tea? <|endoftext|> In the sunlit terraces"
+#  "of someunknownPlace."
+# )
+# integers = tokenizer.encode(text, allowed_special={"<|endoftext|>"})
+# print(integers)
+# integers = tokenizer.encode("Akwirw ier")
+# print(integers)
+
+encText = tokenizer.encode(novelText)
+print(len(encText))
+

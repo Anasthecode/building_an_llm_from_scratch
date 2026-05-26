@@ -49,3 +49,22 @@ class HelperMethods:
     preprocessedSize = len(preprocessed)
 
     return preprocessed, preprocessedSize
+  
+  @staticmethod
+  def makeVocabV1(preprocessed):
+    allWords = sorted(set(preprocessed))
+    vocabSize = len(allWords)
+
+    vocab = {token: integer for integer, token in enumerate(allWords)}
+
+    return vocab, vocabSize
+  
+  @staticmethod
+  def makeVocabV2(preprocessed):
+    allWords = sorted(set(preprocessed))
+    allWords.extend(["<|endoftext|>", "<|unk|>"])
+    vocabSize = len(allWords)
+
+    vocab = {token: integer for integer, token in enumerate(allWords)}
+
+    return vocab, vocabSize
